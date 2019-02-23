@@ -7,14 +7,14 @@ $ npm start
 
 ## rendering example
 
-- [dae 렌더링](http://localhost:3000/dae?filename=monster)
+- dae 렌더링 - [http://localhost:3000/dae?filename=monster](http://localhost:3000/dae?filename=monster)
 
-- [svg 렌더링](http://localhost:3000/svg)
+- svg 렌더링 - [http://localhost:3000/svg](http://localhost:3000/svg)
 
-- [svg 렌더링](http://localhost:3000/multi_path_svg?filename=tiger)
+- svg 렌더링 - [http://localhost:3000/multi_path_svg?filename=tiger](http://localhost:3000/multi_path_svg?filename=tiger)
 
-- [glb 렌더링](http://localhost:3000/glb?filename=modelo)
+- glb 렌더링 - [http://localhost:3000/glb?filename=modelo](http://localhost:3000/glb?filename=modelo)
 
-- [obj 렌더링](http://localhost:3000/obj?filename=boots)
+- obj 렌더링 - [http://localhost:3000/obj?filename=boots](http://localhost:3000/obj?filename=boots)
 
 `public/images`의 렌더링 파일은 filename을 이용하여 로드
