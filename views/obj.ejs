@@ -1,0 +1,142 @@
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        color: #fff;
+      }
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+      }
+    </style>
+
+    <script
+      src="https://code.jquery.com/jquery-2.2.4.min.js"
+      integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <h1>Loading...</h1>
+
+    <span type="text" id="obj-file" data-obj=<%=filename%> >
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+    <script src="https://threejs.org/examples/js/controls/TrackballControls.js"></script>
+    <script src="https://mamboleoo.be/learnThree/demos/OBJLoader.js"></script>
+    <!-- <script src="/javascripts/build/three.js"></script> -->
+    <script src="/javascripts/controls/OrbitControls.js"></script>
+    <script src="/javascripts/loaders/OBJLoader.js"></script>
+    <script>
+      /**
+       * Generate a scene object with a background color
+       **/
+
+      function getScene() {
+        var scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0);
+        return scene;
+      }
+
+      function getCamera() {
+        var aspectRatio = window.innerWidth / window.innerHeight;
+        var camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 100);
+        camera.position.set(-10, 10, -1);
+        return camera;
+      }
+
+      function getLight(scene) {
+        var light1 = new THREE.PointLight(0x666699, 1, 0);
+        light1.position.set(10, 10, 10);
+        scene.add(light1);
+
+        var light2 = new THREE.PointLight(0x666699, 1, 0);
+        light2.position.set(10, 10, -10);
+        scene.add(light2);
+
+        var light3 = new THREE.PointLight(0x666699, 1, 0);
+        light3.position.set(10, -10, 10);
+        scene.add(light3);
+
+        var light4 = new THREE.PointLight(0x666699, 1, 0);
+        light4.position.set(10, -10, -10);
+        scene.add(light4);
+
+        var light5 = new THREE.PointLight(0x666699, 1, 0);
+        light5.position.set(-10, 10, 10);
+        scene.add(light5);
+
+        var light6 = new THREE.PointLight(0x666699, 1, 0);
+        light6.position.set(-10, 10, -10);
+        scene.add(light6);
+
+        var light7 = new THREE.PointLight(0x666699, 1, 0);
+        light7.position.set(-10, -10, 10);
+        scene.add(light7);
+
+        var light8 = new THREE.PointLight(0x666699, 1, 0);
+        light8.position.set(-10, -10, -10);
+        scene.add(light8);
+
+        var ambientLight = new THREE.AmbientLight(0x666699);
+        scene.add(ambientLight);
+        return light1;
+      }
+
+      function getRenderer() {
+        // Create the canvas with a renderer
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
+        // Add support for retina displays
+        renderer.setPixelRatio(window.devicePixelRatio);
+        // Specify the size of the canvas
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        // Add the canvas to the DOM
+        document.body.appendChild(renderer.domElement);
+        return renderer;
+      }
+
+      function getControls(camera, renderer) {
+        var controls = new THREE.TrackballControls(camera, renderer.domElement);
+        controls.zoomSpeed = 0;
+        controls.panSpeed = 0;
+        return controls;
+      }
+
+      function loadModel() {
+        var loader = new THREE.OBJLoader();
+
+        let filename = $("#obj-file").data("obj");
+        loader.load(`/images/${filename}.obj`, function(object) {
+          object.rotation.z = Math.PI;
+          scene.add(object);
+          document.querySelector("h1").style.display = "none";
+        });
+      }
+
+      function render() {
+        requestAnimationFrame(render);
+        renderer.render(scene, camera);
+        controls.update();
+      }
+
+      var scene = getScene();
+      var camera = getCamera();
+      var light = getLight(scene);
+      var renderer = getRenderer();
+      var controls = getControls(camera, renderer);
+
+      loadModel();
+
+      render();
+    </script>
+  </body>
+</html>

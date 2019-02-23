@@ -1,0 +1,142 @@
+<html>
+  <head>
+    <style>
+      body {
+        /* prevent white margin */
+        margin: 0;
+        /* hide scrollbars */
+        overflow: hidden;
+      }
+    </style>
+
+    <script
+      src="https://code.jquery.com/jquery-2.2.4.min.js"
+      integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="loading-overlay">
+      <div id="loading-bar">
+        <span id="progress"></span>
+      </div>
+    </div>
+
+    <span type="text" id="obj-file" data-obj=<%=filename%> >
+
+    <!-- 
+
+Include the main three.js script. 
+
+This means that the global variable THREE will be available for use to use
+-->
+
+    <script src="https://threejs.org/build/three.js"></script>
+
+    <!-- 
+
+Include the OrbitControls script. 
+
+Note that this must be included AFTER the three.js script as it
+needs to use the global THREE variable
+-->
+
+    <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+
+    <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+      // Here is the magic - this function takes any three.js loader and returns a promisifiedLoader
+      function promisifyLoader(loader, onProgress) {
+        function promiseLoader(url) {
+          return new Promise((resolve, reject) => {
+            loader.load(url, resolve, onProgress, reject);
+          });
+        }
+
+        return {
+          originalLoader: loader,
+          load: promiseLoader
+        };
+      }
+
+      // Next, we'll convert the GLTFLoader into a GLTFPromiseLoader
+      // onProgress is optional and we are not using it here
+      const GLTFPromiseLoader = promisifyLoader(new THREE.GLTFLoader());
+
+      // Finally, here is simplest possible example of using the promise loader
+      // Refer to www.blackthreaddesign.com/blog/promisifying-threejs-loaders/
+
+      // for more detailed examples
+
+      let filename = $("#obj-file").data("obj");
+      function load() {
+        GLTFPromiseLoader.load(`/images/${filename}.glb`)
+          .then(loadedObject => {
+            // Note that the returned object differs between three.js loader - log
+            // to console to see what is returned. In the GLTF case, this is how
+            // we add the loaded object to our scene
+            scene.add(loadedObject.scene);
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      }
+
+      let camera, renderer, scene;
+
+      function init() {
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        document.body.appendChild(renderer.domElement);
+
+        scene = new THREE.Scene();
+
+        const fov = 35;
+        const aspect = window.innerWidth / window.innerHeight;
+        const nearClippingPlane = 0.1;
+        const farClippingPlane = 50;
+
+        camera = new THREE.PerspectiveCamera(
+          fov,
+          aspect,
+          nearClippingPlane,
+          farClippingPlane
+        );
+
+        const controls = new THREE.OrbitControls(camera);
+        controls.target.set(0, 0.9, 0);
+        camera.position.set(0, 2.5, 4);
+        controls.update();
+
+        // create a global illumination light
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const pointlight = new THREE.PointLight(0xffffff, 0.8);
+        camera.add(pointlight);
+        scene.add(camera);
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        renderer.render(scene, camera);
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      window.addEventListener("resize", onWindowResize);
+
+      init();
+      load();
+
+      animate();
+    </script>
+  </body>
+</html>
